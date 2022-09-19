@@ -1,0 +1,16 @@
+#!/bin/bash
+source /home/roestlab/anaconda3/etc/profile.d/conda.sh 
+conda activate aparna 
+
+pyprophet_folder=$1
+
+output_folder=$pyprophet_folder/tsv 
+mkdir $output_folder
+
+for i in pyprophet_folder/*.osw;
+do filename=$(basename $i .osw);
+python /media/roestlab/Data1/User/AparnaS/Srinivasan_MS_Thesis/src/Synthetic_Phosphopeptide_Isomers_Analysis_Python/pyprophet_export.py --input-file $i --output-file $output_folder/$filename.tsv;
+done
+
+conda deactivate 
+
