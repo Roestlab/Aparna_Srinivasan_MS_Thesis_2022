@@ -1,0 +1,216 @@
+---
+title: "Non co-eluting phosphopeptide isomers"
+author: "Aparna"
+date: "29/06/2022"
+output:
+  github_document:
+    toc: true
+  pdf_document: 
+    keep_tex: yes
+    latex_engine: xelatex
+    fig_caption: yes
+    toc: yes
+  html_document:
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(data.table)
+library(tidyverse)
+library(ggpmisc)
+source("/Users/aparnasrinivasan/Desktop/MScThesis/Github/Synthetic_phosphopeptide_isomers_TimsTOF/Analysis/utils.R")
+library(ggpubr)
+phosphorylatable_residues <- function(Sequence) {
+  x = length(str_match_all(Sequence, "[STY]")[[1]])
+  return(x)
+}
+
+phosphorylated_residue <- function(modified_sequence){
+  if (grepl("S\\(UniMod:21\\)", modified_sequence)){
+    return("S")
+  }
+  else if (grepl("T\\(UniMod:21\\)", modified_sequence)){
+    return("T")
+  }
+  else if (grepl("Y\\(UniMod:21\\)", modified_sequence)){
+    return("Y")
+  }
+}
+
+oxidation_mods <- function(modified_sequence){
+  peptide <- gsub("\\(Unimod:4\\)", "", modified_sequence)
+  peptide <- gsub("\\(UniMod:21\\)", "", modified_sequence)
+  return(peptide)
+}
+```
+
+```{r, echo=FALSE, message=FALSE}
+ground_truth <- data.table::fread("/Users/aparnasrinivasan/Desktop/MScThesis/Srinivasan_MS_Thesis/Data/ground_truth_table.tsv")
+
+ground_truth$p_res <- mapply(phosphorylatable_residues, ground_truth$Sequence)
+
+library <- data.table::fread("/Users/aparnasrinivasan/Desktop/MScThesis/Srinivasan_MS_Thesis/Data/Data_Analysis_Results/Upool_spectral_library_generation/upool_library_formatted.tsv") %>% rename(RT = iRT) %>% select(-pool,-Protein) %>% mutate(method= "Spectral library") %>% 
+  left_join(ground_truth %>% select(M_pool, Sequence) %>% rename(pool = M_pool) %>% mutate(mpool_gt = TRUE) %>% distinct(), by=c("Sequence")) 
+
+library$mpool_gt <- library$mpool_gt %>% replace_na(FALSE)
+  
+iRT_peptides <- unique((library %>% filter(mpool_gt == FALSE))$Sequence)
+
+diapasef_results <- data.table::fread("/Users/aparnasrinivasan/Desktop/MScThesis/Srinivasan_MS_Thesis/Data/Data_Analysis_Results/OpenSwathWorkflow_3_results/diaPASEF_Results/diapasef_results_3_1.tsv") %>% 
+  left_join(ground_truth %>% select(M_pool, Sequence, n_isomers) %>% rename(pool = M_pool, theoretical_isomers = n_isomers) %>% mutate(mpool_gt = TRUE) %>% distinct(), by=c("pool", "Sequence")) %>%
+   mutate(method = paste("diaPASEF_", ramp_time, sep="")) %>% 
+  filter(!grepl("v2", filename)) %>% 
+  left_join(library %>% select(FullPeptideName, mz, IM) %>% distinct() %>% rename(library_IM = IM), by=c("FullPeptideName", "mz")) %>% 
+  mutate(RT_width = rightWidth - leftWidth)
+
+diapasef_results$mpool_gt <- diapasef_results$mpool_gt %>% replace_na(FALSE)
+
+diapasef_alphatims_extraction <- data.table::fread("/Users/aparnasrinivasan/Desktop/MScThesis/Srinivasan_MS_Thesis/Data/Data_Analysis_Results/OpenSwathWorkflow_3_results/Alphatims_Raw_IM_Extraction/alphatims_IM_extraction_filtered_diapasef_3_1.tsv")  %>% left_join(ground_truth %>% select(Sequence, n_isomers) %>% rename(theoretical_isomers = n_isomers)  %>% distinct(), by=c( "Sequence")) %>% mutate(method = paste("diaPASEF_", ramp_time, sep="")) %>% filter(grepl("UniMod:21", FullPeptideName)) %>% 
+  mutate(RT_width = rightWidth - leftWidth)
+
+non_coeluting_isomer_pairs <- data.table::fread("/Users/aparnasrinivasan/Desktop/MScThesis/Srinivasan_MS_Thesis/Data/Data_Analysis_Results/OpenSwathWorkflow_3_results/Isomers_Analysis/non_coeluting_sitelocalised_isomer_pairs.tsv")%>% 
+ # mutate(delta_IM_transition = abs(transition_IM.x- transition_IM.y)) %>%
+   left_join(diapasef_alphatims_extraction %>% select(feature_id,  RT_width) %>% rename(feature_id.x = feature_id, RT_width.x=RT_width)) %>% 
+  left_join(diapasef_alphatims_extraction %>% select(feature_id,  RT_width) %>% rename(feature_id.y = feature_id, RT_width.y=RT_width)) %>% 
+  mutate(rt_pp_resolution = delta_RT/(RT_width.x/2 + RT_width.y/2)) %>%
+   mutate(FullPeptideName_ox.x = oxidation_mods(FullPeptideName.x), FullPeptideName_ox.y = oxidation_mods(FullPeptideName.y)) %>% 
+  filter(FullPeptideName_ox.x == FullPeptideName_ox.y)
+
+```
+
+
+```{r, echo=FALSE, message=FALSE}
+# knitr::kable(diapasef_alphatims_extraction %>% filter(theoretical_isomers==1) %>% filter(ipf_pep < 0.05) %>% filter(!is.na(smoothed_IM_peakwidth)) %>% group_by(method) %>% summarise(median(smoothed_IM_peakwidth)))
+# 
+# df <- diapasef_alphatims_extraction %>% filter(theoretical_isomers==1) %>% filter(ipf_pep < 0.05) %>% filter(!is.na(smoothed_IM_peakwidth)) %>% group_by(method) %>% summarise(median_peakwidth = median(smoothed_IM_peakwidth))
+
+df <- diapasef_alphatims_extraction %>% filter(peak_prominence < 0.5*smoothed_peak_intensity) %>% left_join(diapasef_alphatims_extraction %>% filter(peak_prominence >= 0.5*smoothed_peak_intensity) %>% filter(ipf_pep < 0.05) %>% filter(!is.na(smoothed_IM_peakwidth)) %>% group_by(method) %>% summarise(median_peakwidth = median(smoothed_IM_peakwidth))) %>% 
+  select(-smoothed_IM_peakwidth) %>% 
+  rename(smoothed_IM_peakwidth = median_peakwidth) # replaced peak width values 
+
+df.1 <- bind_rows(df, 
+                  diapasef_alphatims_extraction %>% filter(peak_prominence >= 0.5*smoothed_peak_intensity), 
+                diapasef_alphatims_extraction %>% filter(is.na(smoothed_IM_peak)))    # combine all possible sets (i.e. replaced, non replaced, and 0 peaks)
+
+df.2 <- df.1 %>% 
+  filter(!is.na(smoothed_IM_peak)) %>% 
+  group_by(method) %>% summarise(median_peakwidth = median(smoothed_IM_peakwidth))  # get median peak width 
+
+non_coeluting_isomer_pairs <- non_coeluting_isomer_pairs %>% select(-smoothed_IM_peakwidth.x, -smoothed_IM_peakwidth.y) %>% 
+  left_join(df.1 %>% select(feature_id, smoothed_IM_peakwidth) %>% rename(feature_id.x = feature_id, smoothed_IM_peakwidth.x = smoothed_IM_peakwidth)) %>% 
+  left_join(df.1 %>% select(feature_id, smoothed_IM_peakwidth) %>% rename(feature_id.y = feature_id, smoothed_IM_peakwidth.y = smoothed_IM_peakwidth)) %>% 
+  left_join(df.2) %>% 
+  mutate(IM_precursor_pp_resolution = 1.18*delta_IM_alphatims/(smoothed_IM_peakwidth.x + smoothed_IM_peakwidth.y), 
+         isomer_pair_name = paste(pmin(FullPeptideName_phospho.x, FullPeptideName_phospho.y), pmax(FullPeptideName_phospho.x, FullPeptideName_phospho.y))) 
+
+
+```
+
+ Summaries 
+
+```{r}d
+knitr::kable(non_coeluting_isomer_pairs  %>% summarise(n_distinct(isomer_pair)))
+
+knitr::kable(non_coeluting_isomer_pairs %>% summarise(n_distinct(isomer_pair_name)))
+
+knitr::kable(non_coeluting_isomer_pairs %>% summarise(n_distinct(Sequence)))
+
+```
+
+Methods
+
+```{r, echo=FALSE, message=FALSE}
+knitr::kable(non_coeluting_isomer_pairs %>% group_by(method) %>% summarise(n_distinct(isomer_pair), n_distinct(isomer_pair_name), n_distinct(Sequence)))
+
+knitr::kable(non_coeluting_isomer_pairs %>% group_by(method) %>% summarise(n_distinct(isomer_pair)))
+
+knitr::kable(non_coeluting_isomer_pairs %>% group_by(method) %>% filter(!is.na(delta_IM_alphatims)) %>% summarise(mean(delta_IM_alphatims), median(delta_IM_alphatims)))
+```
+
+Individual peptides
+
+```{r, echo=FALSE, message=FALSE}
+df <- bind_rows(non_coeluting_isomer_pairs %>% select(method, FullPeptideName.x, ipf_pep.x) %>% rename(FullPeptideName = FullPeptideName.x, ipf_pep = ipf_pep.x),
+ non_coeluting_isomer_pairs %>% select(method, FullPeptideName.y, ipf_pep.y) %>% rename(FullPeptideName = FullPeptideName.y, ipf_pep = ipf_pep.y)) %>% unique()
+
+knitr::kable(df %>% group_by(method, ipf_pep < 0.05) %>% summarise(n_distinct(FullPeptideName)))
+```
+
+```{r, dpi=300, echo=FALSE, message=FALSE}
+ ggplot(non_coeluting_isomer_pairs, aes(x=delta_RT, y=delta_IM_alphatims)) + geom_point(size=0.5) + facet_grid(~method) +
+   xlab("Retention time difference") +
+   ylab("Difference in ion mobility between precursors") +
+   geom_hline(aes(yintercept=median_peakwidth),linetype="dashed") 
+ 
+ knitr::kable(non_coeluting_isomer_pairs %>% group_by(method, delta_IM_alphatims < median_peakwidth) %>% summarise(n_distinct(isomer_pair)))
+ 
+ ggplot(non_coeluting_isomer_pairs %>% filter(!is.na(IM_precursor_pp_resolution)), aes(x=IM_precursor_pp_resolution)) + 
+   geom_histogram(binwidth = 1, boundary=0) + 
+   facet_grid(~method) +
+   scale_x_discrete(limits=c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14), labels = c("0","1","2","3","4"," 5","6", "7", "8", "9", "10","11","12", "13","14")) +
+   ylab("Unique pairs") + 
+   xlab("Pairwise resolution") +
+    geom_vline(aes(xintercept=median(IM_precursor_pp_resolution)), linetype="dashed") 
+ 
+ggplot(non_coeluting_isomer_pairs %>% filter(!is.na(IM_precursor_pp_resolution)), aes(y=IM_precursor_pp_resolution, x=method, fill=method)) + 
+  geom_violin() + 
+    geom_point(position = position_jitter(seed=1, width = 0.05), size=0.5) + 
+  xlab("Method") + 
+  ylab("Pairwise Resolution Value") + 
+  theme(legend.position = "none")
+
+ggplot(non_coeluting_isomer_pairs %>% filter(!is.na(IM_precursor_pp_resolution)), aes(y=IM_precursor_pp_resolution, x=method, fill=method)) + 
+  geom_violin() + 
+    geom_point(position = position_jitter(seed=1, width = 0.05), size=0.5) + 
+  geom_hline(aes(yintercept=0.5), linetype="dashed") + 
+  xlab("Method") + 
+  ylab("Pairwise Resolution Value") + 
+  theme(legend.position = "none")
+
+
+ggplot(non_coeluting_isomer_pairs %>% filter(!is.na(IM_precursor_pp_resolution)), aes(y=IM_precursor_pp_resolution, x=method, fill=method)) + 
+  geom_violin() + 
+    geom_point(position = position_jitter(seed=1, width = 0.05), size=0.5) + 
+ geom_hline(aes(yintercept=1.0), linetype="dashed") + 
+  xlab("Method") + 
+  ylab("Pairwise Resolution Value") + 
+  theme(legend.position = "none") 
+ 
+ggplot(non_coeluting_isomer_pairs %>% filter(!is.na(IM_precursor_pp_resolution)), aes(x=IM_precursor_pp_resolution, color=method)) + 
+  geom_freqpoly(binwidth=1,size=1) + 
+  scale_color_manual(values = c("deepskyblue", "forestgreen", "darkgoldenrod1")) + 
+  scale_x_continuous(breaks=c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), labels = c("0","1","2","3","4"," 5", "6","7","8", "9", "10", "11","12","13","14","15")) +
+  xlab("Pairwise resolution value") + 
+  ylab("Unique isomer pairs") + 
+  labs(color="Method") 
+
+
+knitr::kable(non_coeluting_isomer_pairs %>% group_by(method, IM_precursor_pp_resolution <1) %>% summarise(n_distinct(isomer_pair)))
+knitr::kable(non_coeluting_isomer_pairs %>% group_by(method, IM_precursor_pp_resolution <0.5) %>% summarise(n_distinct(isomer_pair)))
+
+
+knitr::kable(non_coeluting_isomer_pairs %>% group_by(IM_precursor_pp_resolution <1) %>% summarise(n_distinct(isomer_pair)))
+knitr::kable(non_coeluting_isomer_pairs %>% group_by(IM_precursor_pp_resolution <0.5) %>% summarise(n_distinct(isomer_pair)))
+ 
+knitr::kable(non_coeluting_isomer_pairs %>% group_by(method) %>% filter(! is.na(IM_precursor_pp_resolution)) %>% summarise(median(IM_precursor_pp_resolution)))
+
+# ggplot(non_coeluting_isomer_pairs, aes(x=delta_IM_alphatims, y=delta_IM_transition)) + geom_point(size=0.5) + facet_grid(~method) + geom_abline(slope = 1, intercept = 0) + 
+#    xlab("Difference in ion mobility (based on precursor ions)") +
+#    ylab("Difference in ion mobility (based on fragment ions)") 
+#  
+# knitr::kable(non_coeluting_isomer_pairs %>% group_by(method, delta_IM_alphatims > delta_IM_transition) %>% summarise(n_distinct(isomer_pair)))
+
+
+```
+
+```{r, echo=FALSE, message=FALSE}
+thesis_figure_pairs <- c("701072193116529901 1155336707510726394", "5330970702811546805 8325215794575201712", "1157414411016024977 3590371723606560506")
+
+thesis_figures_noncoeluting_pairs <- non_coeluting_isomer_pairs %>% filter(isomer_pair %in% thesis_figure_pairs)
+
+write_tsv(thesis_figures_noncoeluting_pairs,"/Users/aparnasrinivasan/Desktop/MScThesis/Srinivasan_MS_Thesis/Data/Data_Analysis_Results/OpenSwathWorkflow_3_results/Thesis_Figures/thesis_figures_sitelocalised_non_coeuluting_isomer_pairs.tsv")
+
+```
