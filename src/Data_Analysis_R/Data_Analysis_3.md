@@ -177,11 +177,11 @@ Ion mobility analysis
 | TRUE                                 |                        59 |
 | NA                                   |                         2 |
 
-| IM\_precursor\_pp\_resolution &lt; 0.5 | n\_distinct(isomer\_pair) |
-|:---------------------------------------|--------------------------:|
-| FALSE                                  |                        17 |
-| TRUE                                   |                        53 |
-| NA                                     |                         2 |
+| IM\_precursor\_pp\_resolution &lt; 0.588 | n\_distinct(isomer\_pair) |
+|:-----------------------------------------|--------------------------:|
+| FALSE                                    |                        15 |
+| TRUE                                     |                        55 |
+| NA                                       |                         2 |
 
 # Non site localised phosphopeptide isomers
 
@@ -212,8 +212,8 @@ Ion mobility analysis
 | TRUE                                 |                       498 |
 | NA                                   |                        21 |
 
-| IM\_precursor\_pp\_resolution &lt; 0.5 | n\_distinct(isomer\_pair) |
-|:---------------------------------------|--------------------------:|
-| FALSE                                  |                        44 |
-| TRUE                                   |                       479 |
-| NA                                     |                        21 |
+| IM\_precursor\_pp\_resolution &lt; 0.588 | n\_distinct(isomer\_pair) |
+|:-----------------------------------------|--------------------------:|
+| FALSE                                    |                        40 |
+| TRUE                                     |                       483 |
+| NA                                       |                        21 |

@@ -74,17 +74,17 @@ Individual peptides
 | diaPASEF\_300 | TRUE                                 |                       202 |
 | diaPASEF\_300 | NA                                   |                         6 |
 
-| method        | IM\_precursor\_pp\_resolution &lt; 0.58 | n\_distinct(isomer\_pair) |
-|:--------------|:----------------------------------------|--------------------------:|
-| diaPASEF\_100 | FALSE                                   |                        40 |
-| diaPASEF\_100 | TRUE                                    |                       176 |
-| diaPASEF\_100 | NA                                      |                         5 |
-| diaPASEF\_200 | FALSE                                   |                        48 |
-| diaPASEF\_200 | TRUE                                    |                       187 |
-| diaPASEF\_200 | NA                                      |                         8 |
-| diaPASEF\_300 | FALSE                                   |                        59 |
-| diaPASEF\_300 | TRUE                                    |                       174 |
-| diaPASEF\_300 | NA                                      |                         6 |
+| method        | IM\_precursor\_pp\_resolution &lt; 0.588 | n\_distinct(isomer\_pair) |
+|:--------------|:-----------------------------------------|--------------------------:|
+| diaPASEF\_100 | FALSE                                    |                        38 |
+| diaPASEF\_100 | TRUE                                     |                       178 |
+| diaPASEF\_100 | NA                                       |                         5 |
+| diaPASEF\_200 | FALSE                                    |                        46 |
+| diaPASEF\_200 | TRUE                                     |                       189 |
+| diaPASEF\_200 | NA                                       |                         8 |
+| diaPASEF\_300 | FALSE                                    |                        59 |
+| diaPASEF\_300 | TRUE                                     |                       174 |
+| diaPASEF\_300 | NA                                       |                         6 |
 
 | IM\_precursor\_pp\_resolution &lt; 1 | n\_distinct(isomer\_pair) |
 |:-------------------------------------|--------------------------:|
@@ -92,11 +92,11 @@ Individual peptides
 | TRUE                                 |                       624 |
 | NA                                   |                        19 |
 
-| IM\_precursor\_pp\_resolution &lt; 0.58 | n\_distinct(isomer\_pair) |
-|:----------------------------------------|--------------------------:|
-| FALSE                                   |                       147 |
-| TRUE                                    |                       537 |
-| NA                                      |                        19 |
+| IM\_precursor\_pp\_resolution &lt; 0.588 | n\_distinct(isomer\_pair) |
+|:-----------------------------------------|--------------------------:|
+| FALSE                                    |                       143 |
+| TRUE                                     |                       541 |
+| NA                                       |                        19 |
 
 | method        | median(IM\_precursor\_pp\_resolution) |
 |:--------------|--------------------------------------:|

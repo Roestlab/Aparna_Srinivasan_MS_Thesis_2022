@@ -271,7 +271,7 @@ df <- co_eluting_isomer_pairs %>% filter(ipf_pep_pass==2)
  
 knitr::kable(df %>% group_by(IM_precursor_pp_resolution <1) %>% summarise(n_distinct(isomer_pair)))
  
-knitr::kable(df %>% group_by(IM_precursor_pp_resolution < 0.5) %>% summarise(n_distinct(isomer_pair)))
+knitr::kable(df %>% group_by(IM_precursor_pp_resolution < 0.588) %>% summarise(n_distinct(isomer_pair)))
  
  # ggplot(df, aes(x=delta_IM_alphatims, y=delta_IM_transition)) + geom_point(size=0.5) + facet_grid(~method) + geom_abline(slope = 1, intercept = 0) + 
  #   xlab("Difference in ion mobility (based on precursor ions)") +
@@ -306,7 +306,7 @@ ggplot(df, aes(x=delta_RT, y=delta_IM_alphatims)) + geom_point(size=0.5) + facet
  
 knitr::kable(df %>% group_by(IM_precursor_pp_resolution <1) %>% summarise(n_distinct(isomer_pair)))
  
-knitr::kable(df %>% group_by(IM_precursor_pp_resolution < 0.5) %>% summarise(n_distinct(isomer_pair)))
+knitr::kable(df %>% group_by(IM_precursor_pp_resolution < 0.588) %>% summarise(n_distinct(isomer_pair)))
  
 # ggplot(df, aes(x=delta_IM_alphatims, y=delta_IM_transition)) + geom_point(size=0.5) + facet_grid(~method) + geom_abline(slope = 1, intercept = 0) + 
 #    xlab("Difference in ion mobility (based on precursor ions)") +

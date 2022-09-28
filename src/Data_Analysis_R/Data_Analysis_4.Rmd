@@ -189,11 +189,11 @@ ggplot(non_coeluting_isomer_pairs %>% filter(!is.na(IM_precursor_pp_resolution))
 
 
 knitr::kable(non_coeluting_isomer_pairs %>% group_by(method, IM_precursor_pp_resolution <1) %>% summarise(n_distinct(isomer_pair)))
-knitr::kable(non_coeluting_isomer_pairs %>% group_by(method, IM_precursor_pp_resolution <0.58) %>% summarise(n_distinct(isomer_pair)))
+knitr::kable(non_coeluting_isomer_pairs %>% group_by(method, IM_precursor_pp_resolution <0.588) %>% summarise(n_distinct(isomer_pair)))
 
 
 knitr::kable(non_coeluting_isomer_pairs %>% group_by(IM_precursor_pp_resolution <1) %>% summarise(n_distinct(isomer_pair)))
-knitr::kable(non_coeluting_isomer_pairs %>% group_by(IM_precursor_pp_resolution <0.58) %>% summarise(n_distinct(isomer_pair)))
+knitr::kable(non_coeluting_isomer_pairs %>% group_by(IM_precursor_pp_resolution <0.588) %>% summarise(n_distinct(isomer_pair)))
  
 knitr::kable(non_coeluting_isomer_pairs %>% group_by(method) %>% filter(! is.na(IM_precursor_pp_resolution)) %>% summarise(median(IM_precursor_pp_resolution)))
 
