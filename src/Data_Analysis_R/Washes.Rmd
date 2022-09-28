@@ -38,7 +38,7 @@ df.1 <- washes %>% select(Sequence, `Modified sequence`, `Phospho (STY) Probabil
 
 ```
 
-```{r}
+```{r, dpi=300}
 ggplot(df.1 %>% filter(Experiment %in% c(2110, 2123,2128)) %>% group_by(`Modified sequence`, `Raw file`) %>% slice(which.min(PEP)), aes(x=factor(Experiment), fill=factor(U_pool, levels = c(samples, "Other Protein")))) + 
   geom_bar() + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(fill="Peptide Annotation") +
@@ -49,7 +49,7 @@ ggplot(df.1 %>% filter(Experiment %in% c(2110, 2123,2128)) %>% group_by(`Modifie
   scale_x_discrete(limits=rev(factor(c(2110,2123,2128))))
 ```
 
-```{r}
+```{r,dpi=300}
 M_samples = c("M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12", "M13", "M14", "M15", "M16")
 
 ggplot(df.1 %>% filter(! Experiment %in% c(2110, 2123,2128)) %>% group_by(`Modified sequence`, `Raw file`) %>% slice(which.min(PEP)), aes(x=factor(Experiment), fill=factor(M_pool, levels = c(M_samples, "Other Protein")))) + geom_bar() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(fill="Peptide Annotation") +
@@ -60,7 +60,7 @@ ggplot(df.1 %>% filter(! Experiment %in% c(2110, 2123,2128)) %>% group_by(`Modif
 
 ```
 
-```{r}
+```{r,dpi=300}
 ggplot(df.1 %>% filter(Experiment %in% c(2131,2141,2146,2147,2149,2150,2152,2154,2156,2158,2160,2162)) %>% group_by(`Modified sequence`, `Raw file`) %>% slice(which.min(PEP)), aes(x=factor(Experiment), fill=factor(M_pool, levels = c(M_samples, "Other Protein")))) + geom_bar() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(fill="Peptide Annotation") +
   xlab("Wash #") + 
   ylab("Unique identifications") +
@@ -71,7 +71,7 @@ ggplot(df.1 %>% filter(Experiment %in% c(2131,2141,2146,2147,2149,2150,2152,2154
 ```
 
 
-```{r}
+```{r,dpi=300}
 ggplot(df.1 %>% filter(Experiment %in% seq(2164,2198,2)) %>% group_by(`Modified sequence`, `Raw file`) %>% slice(which.min(PEP)), aes(x=factor(Experiment), fill=factor(M_pool, levels = c(M_samples, "Other Protein")))) + geom_bar() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(fill="Peptide Annotation") +
   xlab("Wash #") + 
   ylab("Unique identifications") +
@@ -81,7 +81,7 @@ ggplot(df.1 %>% filter(Experiment %in% seq(2164,2198,2)) %>% group_by(`Modified 
 
 ```
 
-```{r}
+```{r,dpi=300}
 ggplot(df.1 %>% filter(Experiment %in% seq(2200,2230,2)) %>% group_by(`Modified sequence`, `Raw file`) %>% slice(which.min(PEP)), aes(x=factor(Experiment), fill=factor(M_pool, levels = c(M_samples, "Other Protein")))) + geom_bar() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(fill="Peptide Annotation") +
   xlab("Wash #") + 
   ylab("Unique identifications") +
