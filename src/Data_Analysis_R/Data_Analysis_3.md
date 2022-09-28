@@ -126,17 +126,17 @@ Ion mobility analysis
 | diaPASEF\_300 | TRUE                                 |                       146 |
 | diaPASEF\_300 | NA                                   |                        11 |
 
-| method        | IM\_precursor\_pp\_resolution &lt; 0.5 | n\_distinct(isomer\_pair) |
-|:--------------|:---------------------------------------|--------------------------:|
-| diaPASEF\_100 | FALSE                                  |                        17 |
-| diaPASEF\_100 | TRUE                                   |                       230 |
-| diaPASEF\_100 | NA                                     |                        10 |
-| diaPASEF\_200 | FALSE                                  |                        22 |
-| diaPASEF\_200 | TRUE                                   |                       167 |
-| diaPASEF\_200 | NA                                     |                         2 |
-| diaPASEF\_300 | FALSE                                  |                        22 |
-| diaPASEF\_300 | TRUE                                   |                       135 |
-| diaPASEF\_300 | NA                                     |                        11 |
+| method        | IM\_precursor\_pp\_resolution &lt; 0.588 | n\_distinct(isomer\_pair) |
+|:--------------|:-----------------------------------------|--------------------------:|
+| diaPASEF\_100 | FALSE                                    |                        14 |
+| diaPASEF\_100 | TRUE                                     |                       233 |
+| diaPASEF\_100 | NA                                       |                        10 |
+| diaPASEF\_200 | FALSE                                    |                        21 |
+| diaPASEF\_200 | TRUE                                     |                       168 |
+| diaPASEF\_200 | NA                                       |                         2 |
+| diaPASEF\_300 | FALSE                                    |                        20 |
+| diaPASEF\_300 | TRUE                                     |                       137 |
+| diaPASEF\_300 | NA                                       |                        11 |
 
 | IM\_precursor\_pp\_resolution &lt; 1 | n\_distinct(isomer\_pair) |
 |:-------------------------------------|--------------------------:|
@@ -144,11 +144,11 @@ Ion mobility analysis
 | TRUE                                 |                       557 |
 | NA                                   |                        23 |
 
-| IM\_precursor\_pp\_resolution &lt; 0.5 | n\_distinct(isomer\_pair) |
-|:---------------------------------------|--------------------------:|
-| FALSE                                  |                        61 |
-| TRUE                                   |                       532 |
-| NA                                     |                        23 |
+| IM\_precursor\_pp\_resolution &lt; 0.588 | n\_distinct(isomer\_pair) |
+|:-----------------------------------------|--------------------------:|
+| FALSE                                    |                        55 |
+| TRUE                                     |                       538 |
+| NA                                       |                        23 |
 
 # Site localised co-eluting isomers
 

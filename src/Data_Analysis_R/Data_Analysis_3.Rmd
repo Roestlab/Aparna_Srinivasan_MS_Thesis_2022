@@ -184,14 +184,14 @@ ggplot(co_eluting_isomer_pairs, aes(x=delta_RT, y=delta_IM_alphatims, color=fact
 
 ggplot(co_eluting_isomer_pairs %>% filter(!is.na(IM_precursor_pp_resolution)), aes(y=IM_precursor_pp_resolution, x=method, fill=method)) + 
   geom_violin() + 
-  geom_hline(aes(yintercept=0.59), linetype="dashed")  + 
+  geom_hline(aes(yintercept=0.588), linetype="dashed")  + 
  geom_hline(aes(yintercept=1.0), linetype="dashed") + 
   xlab("Method") + 
   ylab("Pairwise Resolution Value")
 
 ggplot(co_eluting_isomer_pairs %>% filter(!is.na(IM_precursor_pp_resolution)), aes(y=IM_precursor_pp_resolution, x=method, fill=method)) + 
   geom_violin() + 
-  geom_hline(aes(yintercept=0.59), linetype="dashed")  + 
+  geom_hline(aes(yintercept=0.588), linetype="dashed")  + 
  geom_hline(aes(yintercept=1.0), linetype="dashed") + 
   xlab("Method") + 
   ylab("Pairwise Resolution Value")
@@ -206,7 +206,7 @@ ggplot(co_eluting_isomer_pairs %>% filter(!is.na(IM_precursor_pp_resolution)), a
 ggplot(co_eluting_isomer_pairs %>% filter(!is.na(IM_precursor_pp_resolution)), aes(y=IM_precursor_pp_resolution, x=method, fill=method)) + 
   geom_violin() + 
   geom_point(position = position_jitter(seed=1, width = 0.01), size=0.5) + 
-  geom_hline(aes(yintercept=0.5), linetype="dashed") + 
+  geom_hline(aes(yintercept=0.588), linetype="dashed") + 
   xlab("Method") + 
   ylab("Pairwise Resolution Value") + 
   theme(legend.position = "none")
@@ -231,12 +231,12 @@ ggplot(co_eluting_isomer_pairs %>% filter(!is.na(IM_precursor_pp_resolution)), a
 
 knitr::kable(co_eluting_isomer_pairs %>% group_by(method, IM_precursor_pp_resolution <1) %>% summarise(n_distinct(isomer_pair)))
  
-knitr::kable(co_eluting_isomer_pairs %>% group_by(method, IM_precursor_pp_resolution < 0.5) %>% summarise(n_distinct(isomer_pair))) 
+knitr::kable(co_eluting_isomer_pairs %>% group_by(method, IM_precursor_pp_resolution < 0.588) %>% summarise(n_distinct(isomer_pair))) 
 
 
 knitr::kable(co_eluting_isomer_pairs %>% group_by(IM_precursor_pp_resolution <1) %>% summarise(n_distinct(isomer_pair)))
 
-knitr::kable(co_eluting_isomer_pairs %>% group_by(IM_precursor_pp_resolution <0.5) %>% summarise(n_distinct(isomer_pair))) 
+knitr::kable(co_eluting_isomer_pairs %>% group_by(IM_precursor_pp_resolution <0.588) %>% summarise(n_distinct(isomer_pair))) 
 
  # ggplot(co_eluting_isomer_pairs, aes(x=delta_IM_alphatims, y=delta_IM_transition)) + geom_point(size=0.5) + facet_grid(~method) + geom_abline(slope = 1, intercept = 0) + 
  #   xlab("Difference in ion mobility (based on precursor ions)") +
